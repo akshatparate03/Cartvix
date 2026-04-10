@@ -15,16 +15,23 @@ import Checkout from "./pages/Checkout";
 import About from "./pages/About";
 import AdminProduct from "./pages/AdminProduct";
 
+// ── Scroll to top on every route change ──────────────────────
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
+  return null;
+}
+
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const location = useLocation();
 
-  // When navigated from ProductDetail category badge, pick up the state
   useEffect(() => {
     if (location.state?.category) {
       setSelectedCategory(location.state.category);
-      // Clear the state so it doesn't re-trigger on re-renders
       window.history.replaceState({}, "");
     }
   }, [location.state]);
@@ -102,6 +109,7 @@ export default function App() {
               duration: 3000,
             }}
           />
+          <ScrollToTop />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
