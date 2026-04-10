@@ -1,46 +1,128 @@
-import { SlidersHorizontal, ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { SlidersHorizontal, ChevronDown, X } from "lucide-react";
+import { useState } from "react";
 
 export default function FilterBar({ onFilterChange, currentFilters }) {
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(false);
 
   const sortOptions = [
-    { value: 'latest', label: 'Latest' },
-    { value: 'price_asc', label: 'Price: Low to High' },
-    { value: 'price_desc', label: 'Price: High to Low' },
-  ]
+    { value: "latest", label: "Latest" },
+    { value: "price_asc", label: "Price ↑" },
+    { value: "price_desc", label: "Price ↓" },
+  ];
 
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      <button onClick={() => setShowFilters(!showFilters)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-orange-300 transition-colors">
-        <SlidersHorizontal size={16} /> Filters
-        <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+      <button
+        onClick={() => setShowFilters(!showFilters)}
+        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200"
+        style={{
+          background: showFilters
+            ? "rgba(255,54,33,0.1)"
+            : "rgba(255,255,255,0.04)",
+          border: showFilters
+            ? "1px solid rgba(255,54,33,0.2)"
+            : "1px solid rgba(255,255,255,0.07)",
+          color: showFilters ? "var(--accent)" : "var(--text-secondary)",
+          fontFamily: "var(--font-sans)",
+        }}
+      >
+        <SlidersHorizontal size={14} />
+        Filters
+        <ChevronDown
+          size={13}
+          style={{
+            transition: "transform 0.2s ease",
+            transform: showFilters ? "rotate(180deg)" : "rotate(0)",
+          }}
+        />
       </button>
 
-      {/* Sort */}
-      <select value={currentFilters.sort || 'latest'}
-        onChange={e => onFilterChange({ ...currentFilters, sort: e.target.value })}
-        className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-orange-300 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 cursor-pointer">
-        {sortOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+      <select
+        value={currentFilters.sort || "latest"}
+        onChange={(e) =>
+          onFilterChange({ ...currentFilters, sort: e.target.value })
+        }
+        style={{
+          padding: "0.5rem 1rem",
+          borderRadius: 12,
+          fontSize: 13,
+          fontFamily: "var(--font-sans)",
+          cursor: "pointer",
+          fontWeight: 500,
+        }}
+      >
+        {sortOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
       </select>
 
       {showFilters && (
-        <div className="w-full flex items-center gap-4 flex-wrap animate-slide-down bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <div
+          className="w-full flex items-center gap-4 flex-wrap p-4 rounded-2xl"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            animation: "slideDown 0.3s cubic-bezier(0.16,1,0.3,1)",
+          }}
+        >
           <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-gray-600">Price Range:</label>
-            <input type="number" placeholder="Min ₹" value={currentFilters.minPrice || ''}
-              onChange={e => onFilterChange({ ...currentFilters, minPrice: e.target.value })}
-              className="w-24 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" />
-            <span className="text-gray-400">—</span>
-            <input type="number" placeholder="Max ₹" value={currentFilters.maxPrice || ''}
-              onChange={e => onFilterChange({ ...currentFilters, maxPrice: e.target.value })}
-              className="w-24 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" />
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--text-tertiary)",
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+              }}
+            >
+              Price:
+            </label>
+            <input
+              type="number"
+              placeholder="Min ₹"
+              value={currentFilters.minPrice || ""}
+              onChange={(e) =>
+                onFilterChange({ ...currentFilters, minPrice: e.target.value })
+              }
+              style={{
+                width: 96,
+                padding: "6px 12px",
+                borderRadius: 10,
+                fontSize: 13,
+              }}
+            />
+            <span style={{ color: "var(--text-tertiary)", fontSize: 12 }}>
+              —
+            </span>
+            <input
+              type="number"
+              placeholder="Max ₹"
+              value={currentFilters.maxPrice || ""}
+              onChange={(e) =>
+                onFilterChange({ ...currentFilters, maxPrice: e.target.value })
+              }
+              style={{
+                width: 96,
+                padding: "6px 12px",
+                borderRadius: 10,
+                fontSize: 13,
+              }}
+            />
           </div>
-          <button onClick={() => onFilterChange({ sort: 'latest' })}
-            className="text-sm text-orange-500 hover:text-orange-600 font-medium">Clear All</button>
+
+          <button
+            onClick={() => onFilterChange({ sort: "latest" })}
+            className="flex items-center gap-1.5 text-sm font-medium transition-all duration-200"
+            style={{ color: "var(--accent)", fontSize: 12 }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+          >
+            <X size={12} /> Clear All
+          </button>
         </div>
       )}
     </div>
-  )
+  );
 }

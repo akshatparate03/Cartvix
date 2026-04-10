@@ -1,6 +1,3 @@
--- Cartvix Database Schema
--- Run this manually OR let Spring JPA auto-create (ddl-auto=update)
-
 CREATE DATABASE IF NOT EXISTS cartvix_db;
 USE cartvix_db;
 
