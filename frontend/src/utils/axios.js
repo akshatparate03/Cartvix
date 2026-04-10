@@ -1,9 +1,10 @@
-import axios from 'axios'
+import axios from "axios";
 
 const instance = axios.create({
-  baseURL: '/api',
+  baseURL:
+    import.meta.env.VITE_API_URL || "https://cartvix-backend.onrender.com/api",
   timeout: 30000,
-  headers: { 'Content-Type': 'application/json' }
-})
+  headers: { "Content-Type": "application/json" },
+});
 
-export default instance
+export default instance;
