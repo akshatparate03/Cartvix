@@ -22,7 +22,8 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
 
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
@@ -30,22 +31,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers(
-                    "/api/auth/**",          // login, register, OTP, google
-                    "/api/products/search",
-                    "/api/products",
-                    "/api/products/{id}"
-                ).permitAll()
-                // Everything else needs JWT
-                .anyRequest().authenticated()
-            )
-            // Our JWT filter runs before Spring's username/password filter
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // IMPORTANT: Disable Spring's built-in OAuth2 login redirect flow.
+                // Our Google auth is handled manually in GoogleAuthService (token verify via
+                // REST).
+                // Without this, Spring tries to set up /login/oauth2/code/google redirect
+                // which causes the Error 400 "Missing redirect_uri" from Google.
+                .oauth2Login(oauth2 -> oauth2.disable())
+
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/products/search",
+                                "/api/products",
+                                "/api/products/{id}")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
