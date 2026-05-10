@@ -1,0 +1,70 @@
+# ================================================================
+#  Cartvix — netlify.toml
+#  Full SEO + Performance + Security configuration
+# ================================================================
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# ── SPA Routing (React Router fallback) ─────────────────────────
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
+
+# ── Force HTTPS ──────────────────────────────────────────────────
+[[redirects]]
+  from   = "http://cartvix.netlify.app/*"
+  to     = "https://cartvix.netlify.app/:splat"
+  status = 301
+  force  = true
+
+# ── Security & SEO Headers ──────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security
+    X-Frame-Options           = "DENY"
+    X-XSS-Protection          = "1; mode=block"
+    X-Content-Type-Options    = "nosniff"
+    Referrer-Policy           = "strict-origin-when-cross-origin"
+    Permissions-Policy        = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://cartvix-backend.onrender.com https://accounts.google.com; frame-src https://accounts.google.com;"
+
+    # Performance
+    Cache-Control             = "public, max-age=0, must-revalidate"
+
+# ── Long cache for static assets ────────────────────────────────
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── Cache fonts ──────────────────────────────────────────────────
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── No cache for HTML (always fresh) ────────────────────────────
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ── sitemap & robots always fresh ───────────────────────────────
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type  = "application/xml"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type  = "text/plain"

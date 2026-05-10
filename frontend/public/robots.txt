@@ -1,0 +1,19 @@
+# ================================================================
+#  Cartvix — robots.txt
+#  https://cartvix.netlify.app
+# ================================================================
+
+User-agent: *
+Allow: /
+
+# Block admin routes from indexing
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /cart
+
+# Block API calls
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://cartvix.netlify.app/sitemap.xml
