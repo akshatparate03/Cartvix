@@ -64,69 +64,83 @@
     rel="stylesheet" />
 
   <!-- ═══════════════════════════════════════════════════════
-         STRUCTURED DATA (JSON-LD) — Website + Organization
+         STRUCTURED DATA — WebSite
     ═══════════════════════════════════════════════════════ -->
   <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Cartvix",
-      "url": "https://cartvix.netlify.app",
-      "description": "India's next-generation fashion e-commerce platform",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://cartvix.netlify.app/?search={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Cartvix",
-      "url": "https://cartvix.netlify.app",
-      "logo": "https://cartvix.netlify.app/Cartvix.png",
-      "description": "Premium Indian fashion e-commerce platform offering Shoes, Clothes, Watches, Bags and more.",
-      "founder": {
-        "@type": "Person",
-        "name": "Akshat Parate"
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Cartvix",
+    "url": "https://cartvix.netlify.app",
+    "description": "India's next-generation fashion e-commerce platform",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://cartvix.netlify.app/?search={search_term_string}"
       },
-      "sameAs": [
-        "https://github.com/akshatparate03",
-        "https://www.linkedin.com/in/akshatparate03",
-        "https://www.instagram.com/akshat_parate_2803"
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════
+         STRUCTURED DATA — Organization
+    ═══════════════════════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Cartvix",
+    "url": "https://cartvix.netlify.app",
+    "logo": "https://cartvix.netlify.app/Cartvix.png",
+    "description": "Premium Indian fashion e-commerce platform offering Shoes, Clothes, Watches, Bags and more.",
+    "founder": {
+      "@type": "Person",
+      "name": "Akshat Parate"
+    },
+    "sameAs": [
+      "https://github.com/akshatparate03",
+      "https://www.linkedin.com/in/akshatparate03",
+      "https://www.instagram.com/akshat_parate_2803"
+    ]
+  }
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════
+         STRUCTURED DATA — OnlineStore
+         NOTE: Using OfferCatalog (not Product) to avoid the
+         "offers/review/aggregateRating required" warning.
+         Product-level schema should be added dynamically
+         on individual product pages via React Helmet.
+    ═══════════════════════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "name": "Cartvix",
+    "url": "https://cartvix.netlify.app",
+    "currenciesAccepted": "INR",
+    "paymentAccepted": "Credit Card, Debit Card, UPI, Razorpay",
+    "areaServed": "IN",
+    "priceRange": "₹₹",
+    "description": "India's premium fashion e-commerce platform. Shop Shoes, T-Shirts, Jeans, Watches, Bags and more.",
+    "image": "https://cartvix.netlify.app/Cartvix.png",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Fashion Categories",
+      "itemListElement": [
+        { "@type": "OfferCatalog", "name": "Shoes",    "url": "https://cartvix.netlify.app/?category=Shoes" },
+        { "@type": "OfferCatalog", "name": "T-Shirts", "url": "https://cartvix.netlify.app/?category=T-Shirts" },
+        { "@type": "OfferCatalog", "name": "Jeans",    "url": "https://cartvix.netlify.app/?category=Jeans" },
+        { "@type": "OfferCatalog", "name": "Watches",  "url": "https://cartvix.netlify.app/?category=Watches" },
+        { "@type": "OfferCatalog", "name": "Bags",     "url": "https://cartvix.netlify.app/?category=Bags" },
+        { "@type": "OfferCatalog", "name": "Caps",     "url": "https://cartvix.netlify.app/?category=Caps" }
       ]
     }
-    </script>
+  }
+  </script>
 
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "OnlineStore",
-      "name": "Cartvix",
-      "url": "https://cartvix.netlify.app",
-      "currenciesAccepted": "INR",
-      "paymentAccepted": "Credit Card, Debit Card, UPI, Razorpay",
-      "areaServed": "IN",
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Fashion Categories",
-        "itemListElement": [
-          { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Shoes" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "T-Shirts" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Jeans" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Watches" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Bags" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Caps" } }
-        ]
-      }
-    }
-    </script>
 </head>
 
 <body>
