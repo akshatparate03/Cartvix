@@ -15,3 +15,12 @@ mvn clean install -DskipTests
 cd frontend
 npm run dev
 npm install
+
+# Github Commands
+
+git status
+git init
+git add .
+git commit -m "SEO Optimized"
+git pull origin main
+git push origin main
