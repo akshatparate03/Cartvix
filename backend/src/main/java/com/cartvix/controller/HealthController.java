@@ -23,22 +23,16 @@ public class HealthController {
     @Value("${spring.security.oauth2.client.registration.google.client-id:}")
     private String googleClientId;
 
-    @Value("${app.tryon.api-key:}")
-    private String tryOnApiKey;
-
     @GetMapping("/status")
     public ResponseEntity<?> healthStatus() {
         boolean dbOk = checkDatabase();
         boolean googleOk = googleClientId != null && !googleClientId.isEmpty();
-        boolean tryOnLive = tryOnApiKey != null && !tryOnApiKey.isEmpty()
-                && !tryOnApiKey.equals("your_fashn_ai_api_key");
         String overall = dbOk ? "UP" : "DEGRADED";
         return ResponseEntity.ok(Map.of(
                 "status", overall,
                 "backend", "UP",
                 "database", dbOk ? "UP" : "DOWN",
                 "googleOAuth", googleOk ? "CONFIGURED" : "NOT_CONFIGURED",
-                "tryOnAI", tryOnLive ? "LIVE" : "DEMO_MODE",
                 "timestamp", LocalDateTime.now().toString(),
                 "version", "1.0.0"));
     }
@@ -47,8 +41,6 @@ public class HealthController {
     public ResponseEntity<String> healthPage() {
         boolean dbOk = checkDatabase();
         boolean googleOk = googleClientId != null && !googleClientId.isEmpty();
-        boolean tryOnLive = tryOnApiKey != null && !tryOnApiKey.isEmpty()
-                && !tryOnApiKey.equals("your_fashn_ai_api_key");
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm:ss a"));
 
         String html = """
@@ -171,21 +163,6 @@ public class HealthController {
                         </div>
                       </div>
 
-                      <!-- Try-On AI -->
-                      <div class="card">
-                        <div class="card-header">
-                          <div class="card-icon-label">
-                            <div class="card-icon" style="background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25)">&#128085;</div>
-                            <div class="card-label">Virtual Try-On AI</div>
-                          </div>
-                          <div class="status-pill %TRYON_CLASS%"><span class="dot"></span> %TRYON_TEXT%</div>
-                        </div>
-                        <div class="card-detail">
-                          Endpoint: <span>/api/tryon/generate</span><br/>
-                          Mode: <span>%TRYON_MODE%</span>
-                        </div>
-                      </div>
-
                     </div>
 
                     <div class="timestamp">Last checked: <span>%TIMESTAMP%</span></div>
@@ -208,9 +185,6 @@ public class HealthController {
                 .replace("%DB_CONN%", dbOk ? "Active" : "Failed — check datasource URL")
                 .replace("%GOOGLE_CLASS%", googleOk ? "up" : "down")
                 .replace("%GOOGLE_TEXT%", googleOk ? "Configured" : "Missing")
-                .replace("%TRYON_CLASS%", tryOnLive ? "up" : "info")
-                .replace("%TRYON_TEXT%", tryOnLive ? "Live" : "Demo")
-                .replace("%TRYON_MODE%", tryOnLive ? "fashn.ai (live)" : "Fallback placeholder")
                 .replace("%TIMESTAMP%", now);
 
         return ResponseEntity.ok()

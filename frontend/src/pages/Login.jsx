@@ -185,7 +185,7 @@ export default function Login() {
               margin: "0 auto 40px",
             }}
           >
-            Your premium shopping destination with AI-powered virtual try-on.
+            Your premium shopping destination for the latest fashion trends.
           </p>
 
           <div style={{ display: "flex", gap: 32, justifyContent: "center" }}>
