@@ -8,19 +8,22 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByCategoryIgnoreCase(String category);
+        List<Product> findByCategoryIgnoreCase(String category);
 
-    @Query("SELECT p FROM Product p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.category) LIKE LOWER(CONCAT('%',:q,'%'))")
-    List<Product> searchProducts(@Param("q") String q);
+        // FEATURE: fetch all products listed by a given seller (seller dashboard)
+        List<Product> findBySellerId(Long sellerId);
 
-    // FIX: Use nativeQuery=true to avoid Hibernate sending null params as bytea
-    // which causes "function lower(bytea) does not exist" on PostgreSQL
-    @Query(value = "SELECT * FROM products WHERE " +
-            "(:category IS NULL OR LOWER(category) = LOWER(CAST(:category AS VARCHAR))) AND " +
-            "(:minPrice IS NULL OR price >= CAST(:minPrice AS FLOAT8)) AND " +
-            "(:maxPrice IS NULL OR price <= CAST(:maxPrice AS FLOAT8))", nativeQuery = true)
-    List<Product> filterProducts(
-            @Param("category") String category,
-            @Param("minPrice") Double minPrice,
-            @Param("maxPrice") Double maxPrice);
+        @Query("SELECT p FROM Product p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.category) LIKE LOWER(CONCAT('%',:q,'%'))")
+        List<Product> searchProducts(@Param("q") String q);
+
+        // FIX: Use nativeQuery=true to avoid Hibernate sending null params as bytea
+        // which causes "function lower(bytea) does not exist" on PostgreSQL
+        @Query(value = "SELECT * FROM products WHERE " +
+                        "(:category IS NULL OR LOWER(category) = LOWER(CAST(:category AS VARCHAR))) AND " +
+                        "(:minPrice IS NULL OR price >= CAST(:minPrice AS FLOAT8)) AND " +
+                        "(:maxPrice IS NULL OR price <= CAST(:maxPrice AS FLOAT8))", nativeQuery = true)
+        List<Product> filterProducts(
+                        @Param("category") String category,
+                        @Param("minPrice") Double minPrice,
+                        @Param("maxPrice") Double maxPrice);
 }

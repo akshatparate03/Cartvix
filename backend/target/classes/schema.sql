@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     is_verified BOOLEAN DEFAULT FALSE,
+    -- FEATURE: Account type — CUSTOMER (default, shops normally)
+    -- or SELLER (can list/manage products like a seller dashboard).
+    role VARCHAR(20) NOT NULL DEFAULT 'CUSTOMER',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -17,7 +20,11 @@ CREATE TABLE IF NOT EXISTS products (
     price DOUBLE NOT NULL,
     description TEXT,
     image_url TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    -- FEATURE: Tracks which seller owns/listed this product.
+    -- NULL for products added by the super-admin or seeded data.
+    seller_id BIGINT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS cart_items (

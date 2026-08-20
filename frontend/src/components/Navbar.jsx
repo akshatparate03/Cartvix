@@ -1,6 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, LogOut, Plus, X, Menu, Zap } from "lucide-react";
+import {
+  ShoppingCart,
+  Search,
+  LogOut,
+  Plus,
+  X,
+  Menu,
+  Zap,
+  Store,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import axios from "../utils/axios";
@@ -8,7 +17,7 @@ import toast from "react-hot-toast";
 import cartvixLogo from "/Cartvix.png";
 
 export default function Navbar({ onMenuToggle }) {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, isSeller, canManageProducts } = useAuth();
   const { cartCount } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -287,7 +296,7 @@ export default function Navbar({ onMenuToggle }) {
             </Link>
           ))}
 
-          {isAdmin && (
+          {canManageProducts && (
             <Link
               to="/admin/add-product"
               className="hidden md:flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl transition-all duration-200"
@@ -402,7 +411,7 @@ export default function Navbar({ onMenuToggle }) {
                     >
                       {user.email}
                     </p>
-                    {isAdmin && (
+                    {(isAdmin || isSeller) && (
                       <span
                         className="inline-block mt-2 px-2 py-0.5 rounded-full text-xs font-semibold"
                         style={{
@@ -411,12 +420,12 @@ export default function Navbar({ onMenuToggle }) {
                           fontSize: 10,
                         }}
                       >
-                        ADMIN
+                        {isAdmin ? "ADMIN" : "SELLER"}
                       </span>
                     )}
                   </div>
 
-                  {isAdmin && (
+                  {canManageProducts && (
                     <Link
                       to="/admin/add-product"
                       onClick={() => setShowDropdown(false)}
@@ -436,6 +445,29 @@ export default function Navbar({ onMenuToggle }) {
                       }}
                     >
                       <Plus size={14} /> Add Product
+                    </Link>
+                  )}
+
+                  {isSeller && (
+                    <Link
+                      to="/seller/my-products"
+                      onClick={() => setShowDropdown(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-sm transition-all duration-200"
+                      style={{
+                        color: "var(--text-secondary)",
+                        fontFamily: "var(--font-sans)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,54,33,0.06)";
+                        e.currentTarget.style.color = "var(--accent)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "var(--text-secondary)";
+                      }}
+                    >
+                      <Store size={14} /> My Products
                     </Link>
                   )}
 

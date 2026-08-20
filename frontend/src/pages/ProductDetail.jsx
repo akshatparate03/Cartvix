@@ -10,11 +10,16 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { user, token, isAdmin } = useAuth();
+  const { user, token, isAdmin, isSeller } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imgTilt, setImgTilt] = useState({ x: 0, y: 0 });
   const imgRef = useRef();
+
+  // FEATURE: admin can manage any product; a seller can only manage
+  // products they themselves listed (product.sellerId === user.id).
+  const canManageThisProduct =
+    isAdmin || (isSeller && product?.sellerId === user?.id);
 
   useEffect(() => {
     fetchProduct();
@@ -66,8 +71,8 @@ export default function ProductDetail() {
       });
       toast.success("Product deleted");
       navigate("/");
-    } catch {
-      toast.error("Failed to delete");
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Failed to delete");
     }
   };
 
@@ -321,7 +326,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Admin actions */}
-          {isAdmin && (
+          {canManageThisProduct && (
             <div
               style={{
                 display: "flex",

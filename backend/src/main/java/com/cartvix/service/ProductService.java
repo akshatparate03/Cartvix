@@ -9,7 +9,8 @@ import java.util.*;
 
 @Service
 public class ProductService {
-    @Autowired private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     public List<Product> getProducts(String category, String sort, Double minPrice, Double maxPrice) {
         List<Product> products;
@@ -18,9 +19,12 @@ public class ProductService {
         } else {
             products = productRepository.filterProducts(null, minPrice, maxPrice);
         }
-        if ("price_asc".equals(sort)) products.sort(Comparator.comparing(Product::getPrice));
-        else if ("price_desc".equals(sort)) products.sort(Comparator.comparing(Product::getPrice).reversed());
-        else products.sort(Comparator.comparing(Product::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+        if ("price_asc".equals(sort))
+            products.sort(Comparator.comparing(Product::getPrice));
+        else if ("price_desc".equals(sort))
+            products.sort(Comparator.comparing(Product::getPrice).reversed());
+        else
+            products.sort(Comparator.comparing(Product::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
         return products;
     }
 
@@ -32,18 +36,30 @@ public class ProductService {
         return productRepository.searchProducts(q);
     }
 
-    public Product createProduct(ProductRequest req) {
+    // FEATURE: returns only the products listed by a specific seller,
+    // used by the seller's "My Products" dashboard view.
+    public List<Product> getProductsBySeller(Long sellerId) {
+        List<Product> products = productRepository.findBySellerId(sellerId);
+        products.sort(Comparator.comparing(Product::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+        return products;
+    }
+
+    // FEATURE: sellerId is now stamped on every new product so we know who
+    // owns it. Pass null for the super-admin (keeps old admin behavior).
+    public Product createProduct(ProductRequest req, Long sellerId) {
         Product p = Product.builder()
-            .title(req.getTitle()).category(req.getCategory())
-            .price(req.getPrice()).description(req.getDescription())
-            .imageUrl(req.getImageUrl()).build();
+                .title(req.getTitle()).category(req.getCategory())
+                .price(req.getPrice()).description(req.getDescription())
+                .imageUrl(req.getImageUrl()).sellerId(sellerId).build();
         return productRepository.save(p);
     }
 
     public Product updateProduct(Long id, ProductRequest req) {
         Product p = getProduct(id);
-        p.setTitle(req.getTitle()); p.setCategory(req.getCategory());
-        p.setPrice(req.getPrice()); p.setDescription(req.getDescription());
+        p.setTitle(req.getTitle());
+        p.setCategory(req.getCategory());
+        p.setPrice(req.getPrice());
+        p.setDescription(req.getDescription());
         p.setImageUrl(req.getImageUrl());
         return productRepository.save(p);
     }

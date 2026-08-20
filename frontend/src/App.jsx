@@ -14,6 +14,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import About from "./pages/About";
 import AdminProduct from "./pages/AdminProduct";
+import SellerProducts from "./pages/SellerProducts";
 
 // ── Scroll to top on every route change ──────────────────────
 function ScrollToTop() {
@@ -77,6 +78,8 @@ function AppLayout() {
             <Route path="/about" element={<About />} />
             <Route path="/admin/add-product" element={<AdminProduct />} />
             <Route path="/admin/edit-product/:id" element={<AdminProduct />} />
+            {/* FEATURE: seller's "My Products" dashboard */}
+            <Route path="/seller/my-products" element={<SellerProducts />} />
           </Routes>
         </main>
         <Footer />

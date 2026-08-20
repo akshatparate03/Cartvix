@@ -86,11 +86,17 @@ public class GoogleAuthService {
                 userRepository.save(user);
             }
         } else {
+            // FEATURE: role passed from the frontend (Register page) is only
+            // honored here, the FIRST time this Google account is created.
+            String role = (req.getRole() != null && req.getRole().trim().equalsIgnoreCase("SELLER"))
+                    ? "SELLER"
+                    : "CUSTOMER";
             user = User.builder()
                     .fullName(name != null ? name : email.split("@")[0])
                     .email(email)
                     .password(UUID.randomUUID().toString())
                     .verified(true)
+                    .role(role)
                     .build();
             userRepository.save(user);
         }
@@ -101,6 +107,7 @@ public class GoogleAuthService {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
+                .role(user.getRole())
                 .build();
 
         return AuthResponse.builder().token(token).user(userDto).build();

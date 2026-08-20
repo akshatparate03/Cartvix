@@ -42,7 +42,7 @@ const FormField = ({ label, required, children }) => (
 export default function AdminProduct() {
   const { id } = useParams();
   const isEdit = !!id;
-  const { token, isAdmin } = useAuth();
+  const { token, isAdmin, isSeller, canManageProducts, user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [customCategory, setCustomCategory] = useState("");
@@ -55,7 +55,8 @@ export default function AdminProduct() {
   });
 
   useEffect(() => {
-    if (!isAdmin) {
+    // FEATURE: both admin and seller accounts can reach this page now.
+    if (!canManageProducts) {
       navigate("/");
       return;
     }
@@ -66,6 +67,14 @@ export default function AdminProduct() {
     try {
       const res = await axios.get(`/products/${id}`);
       const p = res.data;
+
+      // FEATURE: sellers can only edit their OWN listings — admin can edit any.
+      if (!isAdmin && isSeller && p.sellerId !== user?.id) {
+        toast.error("You can only edit your own products");
+        navigate("/seller/my-products");
+        return;
+      }
+
       const isStandardCat = CATEGORIES.slice(0, -1).includes(p.category);
       setForm({
         title: p.title,
@@ -116,14 +125,14 @@ export default function AdminProduct() {
         toast.success("Product added!");
       }
       navigate("/");
-    } catch {
-      toast.error("Failed to save product");
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Failed to save product");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isAdmin) return null;
+  if (!canManageProducts) return null;
 
   const inputStyle = {
     width: "100%",

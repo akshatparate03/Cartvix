@@ -11,12 +11,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private JwtUtil jwtUtil;
-    @Autowired private OtpService otpService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private OtpService otpService;
 
     private static final String GMAIL_REGEX = "^[a-zA-Z0-9._%+\\-]+@gmail\\.com$";
+
+    // FEATURE: normalizes the incoming role to a safe value.
+    // Anything other than "SELLER" (case-insensitive) becomes "CUSTOMER".
+    private String resolveRole(String requestedRole) {
+        if (requestedRole != null && requestedRole.trim().equalsIgnoreCase("SELLER")) {
+            return "SELLER";
+        }
+        return "CUSTOMER";
+    }
 
     public void sendOtp(OtpRequest req) {
         if (!req.getEmail().matches(GMAIL_REGEX))
@@ -38,12 +51,15 @@ public class AuthService {
         if (!otpService.isVerified(req.getEmail()))
             throw new RuntimeException("Email not verified. Please verify OTP first.");
 
-        // FIX: field is now "verified" (not "isVerified") to match the fixed User entity
+        // FIX: field is now "verified" (not "isVerified") to match the fixed User
+        // entity
         User user = User.builder()
                 .fullName(req.getFullName())
                 .email(req.getEmail())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .verified(true)
+                // FEATURE: account type chosen on the registration page
+                .role(resolveRole(req.getRole()))
                 .build();
 
         userRepository.save(user);
@@ -54,6 +70,7 @@ public class AuthService {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
+                .role(user.getRole())
                 .build();
         return AuthResponse.builder().token(token).user(userDto).build();
     }
@@ -72,6 +89,7 @@ public class AuthService {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
+                .role(user.getRole())
                 .build();
         return AuthResponse.builder().token(token).user(userDto).build();
     }

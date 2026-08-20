@@ -29,15 +29,24 @@ public class User {
     // FIX: Renamed from isVerified → verified
     // Lombok @Data generates isVerified() getter for boolean isVerified,
     // but JPA maps it to a column "is_verified" which can conflict.
-    // Using @Column(name="is_verified") + plain field name "verified" fixes both warnings.
+    // Using @Column(name="is_verified") + plain field name "verified" fixes both
+    // warnings.
     @Column(name = "is_verified", nullable = false)
     @Builder.Default
     private boolean verified = false;
+
+    // FEATURE: Account type — "CUSTOMER" (default) or "SELLER".
+    // Sellers get product management access (add/edit/delete their own listings),
+    // similar to how the hardcoded admin currently works.
+    @Column(nullable = false)
+    @Builder.Default
+    private String role = "CUSTOMER";
 
     private LocalDateTime createdAt;
 
     @PrePersist
     public void prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (createdAt == null)
+            createdAt = LocalDateTime.now();
     }
 }

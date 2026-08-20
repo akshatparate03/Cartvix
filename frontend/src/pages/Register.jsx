@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   ArrowRight,
   Check,
+  ShoppingBag,
+  Store,
 } from "lucide-react";
 import GoogleAuthButton from "../components/GoogleAuthButton";
 import cartvixLogo from "/Cartvix.png";
@@ -68,8 +70,89 @@ const GlassInput = ({
   );
 };
 
+// FEATURE: Account type selector — asks the user upfront whether they want
+// to shop (CUSTOMER) or sell (SELLER) on Cartvix, just like real e-commerce
+// platforms (Amazon Seller, Flipkart Seller, Etsy, etc).
+const RoleCard = ({ icon: Icon, title, desc, selected, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    style={{
+      width: "100%",
+      display: "flex",
+      alignItems: "flex-start",
+      gap: 14,
+      padding: "1.1rem",
+      borderRadius: 16,
+      textAlign: "left",
+      cursor: "pointer",
+      background: selected ? "rgba(255,54,33,0.1)" : "rgba(255,255,255,0.03)",
+      border: selected
+        ? "1px solid rgba(255,54,33,0.4)"
+        : "1px solid rgba(255,255,255,0.08)",
+      boxShadow: selected ? "0 0 24px rgba(255,54,33,0.15)" : "none",
+      transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
+    }}
+  >
+    <div
+      style={{
+        width: 42,
+        height: 42,
+        flexShrink: 0,
+        borderRadius: 12,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: selected
+          ? "rgba(255,54,33,0.18)"
+          : "rgba(255,255,255,0.05)",
+        color: selected ? "var(--accent)" : "var(--text-secondary)",
+        transition: "all 0.25s ease",
+      }}
+    >
+      <Icon size={20} />
+    </div>
+    <div style={{ flex: 1 }}>
+      <p
+        style={{
+          fontFamily: "var(--font-display)",
+          fontWeight: 700,
+          fontSize: 15,
+          color: selected ? "var(--accent)" : "var(--text-primary)",
+          marginBottom: 3,
+        }}
+      >
+        {title}
+      </p>
+      <p
+        style={{
+          fontSize: 12.5,
+          color: "var(--text-tertiary)",
+          lineHeight: 1.5,
+        }}
+      >
+        {desc}
+      </p>
+    </div>
+    <div
+      style={{
+        width: 18,
+        height: 18,
+        borderRadius: "50%",
+        flexShrink: 0,
+        marginTop: 2,
+        border: selected
+          ? "5px solid var(--accent)"
+          : "1.5px solid rgba(255,255,255,0.2)",
+        transition: "all 0.2s ease",
+      }}
+    />
+  </button>
+);
+
 export default function Register() {
   const [step, setStep] = useState(1);
+  const [role, setRole] = useState("CUSTOMER");
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -115,7 +198,7 @@ export default function Register() {
         fullName: form.fullName,
       });
       toast.success("OTP sent to your Gmail address.");
-      setStep(2);
+      setStep(3);
       startTimer();
     } catch (e) {
       toast.error(e.response?.data?.message || "Failed to send OTP");
@@ -136,7 +219,7 @@ export default function Register() {
         otp: form.otp,
       });
       toast.success("OTP verified!");
-      setStep(3);
+      setStep(4);
     } catch (e) {
       toast.error(e.response?.data?.message || "Invalid OTP.");
     } finally {
@@ -156,6 +239,7 @@ export default function Register() {
         email: form.email,
         password: form.password,
         otp: form.otp,
+        role,
       });
       toast.success("Account created! Please login.");
       navigate("/login");
@@ -166,7 +250,7 @@ export default function Register() {
     }
   };
 
-  const steps = ["Details", "Verify", "Password"];
+  const steps = ["Account", "Details", "Verify", "Password"];
 
   return (
     <div
@@ -478,8 +562,68 @@ export default function Register() {
               animation: "scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)",
             }}
           >
-            {/* Step 1: Name + Email */}
+            {/* Step 1: Account Type (Customer vs Seller) */}
             {step === 1 && (
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 12 }}
+              >
+                <div>
+                  <h2
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontWeight: 700,
+                      fontSize: 18,
+                      color: "var(--text-primary)",
+                      marginBottom: 4,
+                    }}
+                  >
+                    How will you use Cartvix?
+                  </h2>
+                  <p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
+                    You can always contact support to change this later.
+                  </p>
+                </div>
+
+                <RoleCard
+                  icon={ShoppingBag}
+                  title="I'm a Customer"
+                  desc="Browse products, add to cart, and shop like normal."
+                  selected={role === "CUSTOMER"}
+                  onClick={() => setRole("CUSTOMER")}
+                />
+                <RoleCard
+                  icon={Store}
+                  title="I'm a Seller"
+                  desc="List, edit, and manage your own products on Cartvix — like a seller dashboard."
+                  selected={role === "SELLER"}
+                  onClick={() => setRole("SELLER")}
+                />
+
+                <button
+                  onClick={() => setStep(2)}
+                  className="btn-glow"
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: 12,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    fontFamily: "var(--font-sans)",
+                    cursor: "pointer",
+                    marginTop: 4,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  Continue <ArrowRight size={15} />
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: Name + Email */}
+            {step === 2 && (
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 12 }}
               >
@@ -537,12 +681,27 @@ export default function Register() {
                     </>
                   )}
                 </button>
-                <GoogleAuthButton label="or register with Google" />
+                <GoogleAuthButton label="or register with Google" role={role} />
+                <button
+                  onClick={() => setStep(1)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: 12,
+                    color: "var(--text-tertiary)",
+                    fontFamily: "var(--font-sans)",
+                    textAlign: "left",
+                    padding: 0,
+                  }}
+                >
+                  ← Change account type
+                </button>
               </div>
             )}
 
-            {/* Step 2: OTP Verify */}
-            {step === 2 && (
+            {/* Step 3: OTP Verify */}
+            {step === 3 && (
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 12 }}
               >
@@ -633,7 +792,7 @@ export default function Register() {
                   )}
                 </button>
                 <button
-                  onClick={() => setStep(1)}
+                  onClick={() => setStep(2)}
                   style={{
                     background: "none",
                     border: "none",
@@ -648,8 +807,8 @@ export default function Register() {
               </div>
             )}
 
-            {/* Step 3: Password */}
-            {step === 3 && (
+            {/* Step 4: Password */}
+            {step === 4 && (
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 12 }}
               >

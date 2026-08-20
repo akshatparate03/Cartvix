@@ -6,9 +6,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String title;
@@ -20,7 +24,16 @@ public class Product {
     private String description;
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
+
+    // FEATURE: which seller listed this product. NULL means it was added by
+    // the super-admin or was part of the seeded demo catalog.
+    private Long sellerId;
+
     private LocalDateTime createdAt;
+
     @PrePersist
-    public void prePersist() { if (createdAt == null) createdAt = LocalDateTime.now(); }
+    public void prePersist() {
+        if (createdAt == null)
+            createdAt = LocalDateTime.now();
+    }
 }

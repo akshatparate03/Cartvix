@@ -9,5 +9,10 @@ import lombok.Data;
  */
 @Data
 public class GoogleAuthRequest {
-    private String credential;   // Google ID token (JWT from Google)
+    private String credential; // Google ID token (JWT from Google)
+
+    // FEATURE: "CUSTOMER" or "SELLER" — only used the FIRST time this Google
+    // account signs in (i.e. when we auto-create the user). Ignored on
+    // subsequent logins since the account already has a role.
+    private String role;
 }
