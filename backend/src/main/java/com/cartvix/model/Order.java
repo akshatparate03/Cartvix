@@ -34,10 +34,28 @@ public class Order {
     @Builder.Default
     private String status = "PLACED";
 
+    // FEATURE: timestamp of the last time `status` changed. Shown on the
+    // tracking page ("Last updated: ...").
+    private LocalDateTime statusUpdatedAt;
+
+    // FEATURE: JSON array log of every stage the order has passed through,
+    // e.g. [{"status":"PLACED","timestamp":"..."},
+    // {"status":"SHIPPED","timestamp":"..."}]
+    // Built up manually as the admin advances the order (see OrderService).
+    @Column(columnDefinition = "TEXT")
+    private String trackingHistory;
+
     private LocalDateTime createdAt;
 
     @PrePersist
     public void prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (createdAt == null)
+            createdAt = LocalDateTime.now();
+        if (statusUpdatedAt == null)
+            statusUpdatedAt = createdAt;
+        if (trackingHistory == null || trackingHistory.isBlank()) {
+            String initialStatus = (status == null || status.isBlank()) ? "PLACED" : status;
+            trackingHistory = "[{\"status\":\"" + initialStatus + "\",\"timestamp\":\"" + createdAt + "\"}]";
+        }
     }
 }

@@ -44,7 +44,15 @@ CREATE TABLE IF NOT EXISTS orders (
     shipping_address TEXT,
     payment_method VARCHAR(50),
     total_amount DOUBLE,
+    -- FEATURE: current tracking stage. One of:
+    -- PLACED, CONFIRMED, PACKED, SHIPPED, OUT_FOR_DELIVERY, DELIVERED
     status VARCHAR(50) DEFAULT 'PLACED',
+    -- FEATURE: when the status was last changed (shown on the tracking page)
+    status_updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -- FEATURE: JSON array log of every stage change with its timestamp,
+    -- e.g. [{"status":"PLACED","timestamp":"2026-08-21T10:00:00"}, ...]
+    -- Powers the "straight line" tracker showing when each step happened.
+    tracking_history TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

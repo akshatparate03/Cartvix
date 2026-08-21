@@ -9,6 +9,8 @@ import {
   Menu,
   Zap,
   Store,
+  PackageSearch,
+  ClipboardList,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -468,6 +470,52 @@ export default function Navbar({ onMenuToggle }) {
                       }}
                     >
                       <Store size={14} /> My Products
+                    </Link>
+                  )}
+
+                  {/* FEATURE: order tracking — every logged-in user can see
+                      their own orders and current delivery stage */}
+                  <Link
+                    to="/orders"
+                    onClick={() => setShowDropdown(false)}
+                    className="flex items-center gap-2 px-4 py-3 text-sm transition-all duration-200"
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-sans)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(255,54,33,0.06)";
+                      e.currentTarget.style.color = "var(--accent)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                    }}
+                  >
+                    <PackageSearch size={14} /> My Orders
+                  </Link>
+
+                  {/* FEATURE: admin's manual order-tracking control panel */}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/orders"
+                      onClick={() => setShowDropdown(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-sm transition-all duration-200"
+                      style={{
+                        color: "var(--text-secondary)",
+                        fontFamily: "var(--font-sans)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,54,33,0.06)";
+                        e.currentTarget.style.color = "var(--accent)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "var(--text-secondary)";
+                      }}
+                    >
+                      <ClipboardList size={14} /> Manage Orders
                     </Link>
                   )}
 

@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Loader,
   ShoppingBag,
+  PackageSearch,
 } from "lucide-react";
 
 const inputStyle = {
@@ -31,6 +32,7 @@ export default function Checkout() {
   const [locating, setLocating] = useState(false);
   const [success, setSuccess] = useState(false);
   const [orderTotal, setOrderTotal] = useState(0);
+  const [placedOrderId, setPlacedOrderId] = useState(null);
   const [address, setAddress] = useState({
     fullName: user?.fullName || "",
     phone: "",
@@ -107,7 +109,7 @@ export default function Checkout() {
 
     setLoading(true);
     try {
-      await axios.post(
+      const res = await axios.post(
         "/orders/place",
         {
           shippingAddress: `${address.address}, ${address.city}, ${address.state} - ${address.pincode}`,
@@ -118,6 +120,7 @@ export default function Checkout() {
         },
         { headers: { Authorization: `Bearer ${token}` } },
       );
+      setPlacedOrderId(res.data?.id || null);
       await clearCart();
       setSuccess(true);
     } catch {
@@ -221,24 +224,54 @@ export default function Checkout() {
             })}
           </span>
         </p>
-        <button
-          onClick={() => navigate("/")}
-          className="btn-glow"
+        <div
           style={{
-            padding: "0.75rem 2.5rem",
-            borderRadius: 14,
-            fontSize: 14,
-            fontWeight: 700,
-            fontFamily: "var(--font-sans)",
-            cursor: "pointer",
-            color: "white",
             display: "flex",
-            alignItems: "center",
-            gap: 8,
+            gap: 12,
+            flexWrap: "wrap",
+            justifyContent: "center",
           }}
         >
-          <ShoppingBag size={15} /> Continue Shopping
-        </button>
+          {placedOrderId && (
+            <button
+              onClick={() => navigate(`/orders/${placedOrderId}`)}
+              style={{
+                padding: "0.75rem 1.75rem",
+                borderRadius: 14,
+                fontSize: 14,
+                fontWeight: 700,
+                fontFamily: "var(--font-sans)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                background: "rgba(255,54,33,0.1)",
+                border: "1px solid rgba(255,54,33,0.25)",
+                color: "var(--accent)",
+              }}
+            >
+              <PackageSearch size={15} /> Track Order
+            </button>
+          )}
+          <button
+            onClick={() => navigate("/")}
+            className="btn-glow"
+            style={{
+              padding: "0.75rem 2.5rem",
+              borderRadius: 14,
+              fontSize: 14,
+              fontWeight: 700,
+              fontFamily: "var(--font-sans)",
+              cursor: "pointer",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <ShoppingBag size={15} /> Continue Shopping
+          </button>
+        </div>
 
         <style>{`
           @keyframes rippleOut {
