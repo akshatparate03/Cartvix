@@ -19,6 +19,7 @@ import MyOrders from "./pages/MyOrders";
 import OrderDetail from "./pages/OrderDetail";
 import AdminOrders from "./pages/AdminOrders";
 import AdminDashboard from "./pages/AdminDashboard";
+import ChatWidget from "./components/ChatWidget";
 
 // ── Scroll to top on every route change ──────────────────────
 function ScrollToTop() {
@@ -94,6 +95,7 @@ function AppLayout() {
         </main>
         <Footer />
       </div>
+      <ChatWidget />
     </div>
   );
 }
