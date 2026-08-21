@@ -18,6 +18,7 @@ import SellerProducts from "./pages/SellerProducts";
 import MyOrders from "./pages/MyOrders";
 import OrderDetail from "./pages/OrderDetail";
 import AdminOrders from "./pages/AdminOrders";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // ── Scroll to top on every route change ──────────────────────
 function ScrollToTop() {
@@ -87,6 +88,8 @@ function AppLayout() {
             <Route path="/orders" element={<MyOrders />} />
             <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
+            {/* FEATURE: master admin dashboard */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>
         </main>
         <Footer />

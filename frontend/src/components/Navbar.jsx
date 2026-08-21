@@ -11,6 +11,7 @@ import {
   Store,
   PackageSearch,
   ClipboardList,
+  LayoutDashboard,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -494,6 +495,31 @@ export default function Navbar({ onMenuToggle }) {
                   >
                     <PackageSearch size={14} /> My Orders
                   </Link>
+
+                  {/* FEATURE: master admin dashboard — the main hub, shown
+                      first and styled a bit bolder than the other links */}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/dashboard"
+                      onClick={() => setShowDropdown(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-all duration-200"
+                      style={{
+                        color: "var(--accent)",
+                        fontFamily: "var(--font-sans)",
+                        background: "rgba(255,54,33,0.05)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,54,33,0.1)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,54,33,0.05)";
+                      }}
+                    >
+                      <LayoutDashboard size={14} /> Master Dashboard
+                    </Link>
+                  )}
 
                   {/* FEATURE: admin's manual order-tracking control panel */}
                   {isAdmin && (

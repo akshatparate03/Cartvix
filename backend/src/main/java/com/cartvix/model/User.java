@@ -1,5 +1,6 @@
 package com.cartvix.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -24,6 +25,10 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    // SECURITY FIX: this entity is returned directly inside Order/CartItem
+    // responses and the new admin dashboard — @JsonIgnore keeps the password
+    // hash out of every API response without touching how login/register work.
+    @JsonIgnore
     private String password;
 
     // FIX: Renamed from isVerified → verified
